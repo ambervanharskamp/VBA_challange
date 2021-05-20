@@ -1,0 +1,118 @@
+Sub VBA_Challenge_WallStreet_StockMarket_Analysis()
+
+'Define all the variables which are needed
+
+Dim ticker_symbol As String
+Dim year_opening_price As Double
+Dim year_closing_price As Double
+Dim yearly_difference As Double
+Dim percentage_difference As Double
+Dim total_stock_volume As Double
+Dim summary_table_row As Integer
+
+'Insert headings for summary table
+
+Cells(1, "I").Value = "Ticker Symbol"
+Cells(1, "J").Value = "Yearly Change"
+Cells(1, "K").Value = "Percentage Change"
+Cells(1, "L").Value = "Total Stock Value"
+
+
+'Set values
+summary_table_row = 2
+previous_i = 1
+total_stock_volume = 0
+last_row = Cells(Rows.Count, "A").End(xlUp).Row
+
+    'Start the loop to find information relating to the yearly change, percent change, and total stock volume
+
+    For i = 2 To last_row
+
+        'Compare current ticker_symbol symbol to previous ticker_symbol symbol
+
+        If Cells(i + 1, "A").Value <> Cells(i, "A").Value Then
+
+            'Retrieve value for the ticker_symbol and hold
+
+            ticker_symbol = Cells(i, "A").Value
+            
+            'Put the ticker_symbol into the summary table
+            
+            Cells(summary_table_row, "I").Value = ticker_symbol
+
+            'Move position to next row
+
+            previous_i = previous_i + 1
+
+            'Retrieve values for the year_opening_price and the year_closing_price
+
+            year_opening_price = Cells(previous_i, "C").Value
+            year_closing_price = Cells(i, "F").Value
+            
+            'Calculate the yearly_difference
+            
+            yearly_difference = year_closing_price - year_opening_price
+            
+            'Put the yearly_difference into the summary table
+            
+            Cells(summary_table_row, "J").Value = yearly_difference
+            
+            'Apply colour formatting to yearly_difference column.
+            'If greater than 0, colour green. If less than zero 0, colour red.
+            
+            If Cells(summary_table_row, "J") > 0 Then
+
+                Cells(summary_table_row, "J").Interior.ColorIndex = 4
+
+            Else
+
+                Cells(summary_table_row, "J").Interior.ColorIndex = 3
+            
+            End If
+            
+            'Calculate the percentage_difference
+            
+            percentage_difference = yearly_difference / year_opening_price
+            
+            'Put the yearly_difference into the summary table
+            
+            Cells(summary_table_row, "K").Value = percentage_difference
+            
+            'Format Column "K" to be in a percentage format
+
+            Cells(summary_table_row, "K").NumberFormat = "0.00%"
+
+            'Use a nested loop to calculate the total_stock_volume
+
+            For j = previous_i To i
+                
+                'Calculate total stock volume
+                
+                total_stock_volume = total_stock_volume + Cells(j, "G").Value
+                
+                'Put the total_stock_volume into the summary table
+                
+                Cells(summary_table_row, "L").Value = total_stock_volume
+
+            Next j
+
+            'Add one to the summary_table_row so that the data isn't overwritten as the loop continues
+
+            summary_table_row = summary_table_row + 1
+
+            'Reset the variables to zero for the next loop
+
+            total_stock_volume = 0
+            yearly_difference = 0
+            percentage_difference = 0
+
+            'Reset variable previous_i
+            previous_i = i
+
+        End If
+
+    'Loop is completed and new loop begins
+
+    Next i
+
+End Sub
